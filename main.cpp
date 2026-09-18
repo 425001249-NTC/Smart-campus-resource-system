@@ -77,9 +77,29 @@ int findStudentIndexByID(int id) {
     return -1;
 }
 
-// POSITION 2: DATA STRUCTURE DEVELOPER -- update
+bool updateStudentInArray(int id, const char* newSection, const char* newYearLevel) {
+    int idx = findStudentIndexByID(id);
+    if (idx == -1) {
+        cout << "Error: Student ID not found.\n";
+        return false;
+    }
+    strncpy(studentArray[idx].section, newSection, 9);
+    strncpy(studentArray[idx].yearLevel, newYearLevel, 14);
+    return true;
+}
 
-// POSITION 2: DATA STRUCTURE DEVELOPER -- deletion (shift-left)
+bool deleteStudentFromArray(int id) {
+    int idx = findStudentIndexByID(id);
+    if (idx == -1) {
+        cout << "Error: Student ID not found.\n";
+        return false;
+    }
+    for (int i = idx; i < studentCount - 1; i++) {
+        studentArray[i] = studentArray[i + 1];
+    }
+    studentCount--;
+    return true;
+}
 
 // POSITION 3: MEMORY & POINTER DEVELOPER -- ADT (CampusResource struct)
 
