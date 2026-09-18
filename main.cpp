@@ -18,15 +18,64 @@ struct StudentRecord {
 StudentRecord studentArray[MAX_STUDENTS];
 int studentCount = 0;
 
-// POSITION 2: DATA STRUCTURE DEVELOPER -- array init
+void initializeArray() {
+    studentCount = 0;
+    for (int i = 0; i < MAX_STUDENTS; i++) {
+        studentArray[i].studentID = 0;
+        strcpy(studentArray[i].name, "");
+        strcpy(studentArray[i].section, "");
+        strcpy(studentArray[i].yearLevel, "");
+        studentArray[i].isActive = false;
+    }
+}
 
-// POSITION 2: DATA STRUCTURE DEVELOPER -- bounds check helper
+bool hasCapacity() {
+    return studentCount < MAX_STUDENTS;
+}
 
-// POSITION 2: DATA STRUCTURE DEVELOPER -- insertion
+bool addStudentToArray(int id, const char* name, const char* section, const char* yearLevel) {
+    if (!hasCapacity()) {
+        cout << "Error: Student array is full (capacity " << MAX_STUDENTS << ").\n";
+        return false;
+    }
+    if (studentCount < 0 || studentCount >= MAX_STUDENTS) {
+        cout << "Error: Invalid array index.\n";
+        return false;
+    }
+    studentArray[studentCount].studentID = id;
+    strncpy(studentArray[studentCount].name, name, 49);
+    strncpy(studentArray[studentCount].section, section, 9);
+    strncpy(studentArray[studentCount].yearLevel, yearLevel, 14);
+    studentArray[studentCount].isActive = true;
+    studentCount++;
+    return true;
+}
 
-// POSITION 2: DATA STRUCTURE DEVELOPER -- traversal (O(n))
+void traverseStudentArray() {
+    if (studentCount == 0) {
+        cout << "No student records to display.\n";
+        return;
+    }
+    cout << "ID    | Name                 | Section | Year Level\n";
+    cout << "-----------------------------------------------------\n";
+    for (int i = 0; i < studentCount; i++) {
+        if (studentArray[i].isActive) {
+            cout << studentArray[i].studentID << " | "
+                 << studentArray[i].name << " | "
+                 << studentArray[i].section << " | "
+                 << studentArray[i].yearLevel << "\n";
+        }
+    }
+}
 
-// POSITION 2: DATA STRUCTURE DEVELOPER -- linear search (Requirement 4, O(n))
+int findStudentIndexByID(int id) {
+    for (int i = 0; i < studentCount; i++) {
+        if (studentArray[i].studentID == id && studentArray[i].isActive) {
+            return i;
+        }
+    }
+    return -1;
+}
 
 // POSITION 2: DATA STRUCTURE DEVELOPER -- update
 
