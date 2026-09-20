@@ -2,7 +2,7 @@
 #include <cstring>
 using namespace std;
 
-const int MAX_STUDENTS = 50;
+const int MAX_STUDENTS = 10;
 const int MAX_RESOURCES = 5;
 const int NUM_DEPARTMENTS = 4;
 const int NUM_RESOURCES = 4;
@@ -68,6 +68,7 @@ void traverseStudentArray() {
     }
 }
 
+bool validateStudentID(int id);
 int findStudentIndexByID(int id) {
     for (int i = 0; i < studentCount; i++) {
         if (studentArray[i].studentID == id && studentArray[i].isActive) {
@@ -75,6 +76,35 @@ int findStudentIndexByID(int id) {
         }
     }
     return -1;
+}
+
+//Added
+void searchStudent() {
+    int id;
+
+    cout << "\n===== SEARCH STUDENT =====\n";
+    cout << "Enter Student ID to search: ";
+    cin >> id;
+    cin.ignore(1000, '\n');
+
+    if (!validateStudentID(id)) {
+        return;
+    }
+
+    int idx = findStudentIndexByID(id);
+
+    if (idx == -1) {
+        cout << "Record not found.\n";
+        return;
+    }
+
+    cout << "Match found:\n";
+    cout << "ID    | Name                 | Section | Year Level\n";
+    cout << "-----------------------------------------------------\n";
+    cout << studentArray[idx].studentID << " | "
+         << studentArray[idx].name << " | "
+         << studentArray[idx].section << " | "
+         << studentArray[idx].yearLevel << "\n";
 }
 
 bool updateStudentInArray(int id, const char* newSection, const char* newYearLevel) {
@@ -110,6 +140,7 @@ struct CampusResource {
 };
 
 CampusResource* resourcePtr = nullptr;
+int resourceCount = 0; //added
 
 void allocateResourceMemory() {
     if (resourcePtr != nullptr) {
@@ -201,43 +232,130 @@ void displayResourceAddresses() {
     }
 }
 
+//Added
+bool updateResourceCapacity(const char* resourceID, int newCapacity) {
+    if (resourcePtr == nullptr) {
+        cout << "Error: Resource memory has not been allocated.\n";
+        return false;
+    }
+
+    for (int i = 0; i < MAX_RESOURCES; i++) {
+        if (strcmp(resourcePtr[i].resourceID, resourceID) == 0) {
+            resourcePtr[i].capacity = newCapacity;
+            return true;
+        }
+    }
+
+    cout << "Error: Resource ID not found.\n";
+    return false;
+}
+
 void deallocateResourceMemory() {
     if (resourcePtr != nullptr) {
         delete[] resourcePtr;
         resourcePtr = nullptr;
+         resourceCount = 0; // Added
 
         cout << "Dynamic resource memory released successfully.\n";
     }
 }
 
+//Added
+void manageCampusResources() {
+    int choice;
+
+    do {
+        cout << "\n----- MANAGE CAMPUS RESOURCES -----\n";
+        cout << "1. Allocate Resource Memory\n";
+        cout << "2. Load Sample Resources\n";
+        cout << "3. Display Resources\n";
+        cout << "4. Display Resource Memory Addresses\n";
+        cout << "5. Update Resource Capacity\n";
+        cout << "6. Release Resource Memory\n";
+        cout << "0. Back to Main Menu\n";
+        cout << "Enter your choice: ";
+
+        cin >> choice;
+        if (cin.fail()) {
+            cin.clear();
+            cin.ignore(1000, '\n');
+            cout << "Error: Please enter a valid number.\n";
+            continue;
+        }
+        cin.ignore(1000, '\n');
+
+        switch (choice) {
+            case 1:
+                allocateResourceMemory();
+                break;
+            case 2:
+                initializeResources();
+                break;
+            case 3:
+                displayResourcesUsingPointer();
+                break;
+            case 4:
+                displayResourceAddresses();
+                break;
+            case 5: {
+                char id[10];
+                int newCap;
+
+                cout << "Enter Resource ID (e.g. R-01): ";
+                cin.getline(id, 10);
+
+                cout << "Enter New Capacity: ";
+                cin >> newCap;
+                cin.ignore(1000, '\n');
+
+                if (newCap <= 0) {
+                    cout << "Error: Capacity must be a positive number.\n";
+                } else if (updateResourceCapacity(id, newCap)) {
+                    cout << "Resource capacity updated successfully.\n";
+                }
+                break;
+            }
+            case 6:
+                deallocateResourceMemory();
+                break;
+            case 0:
+                break;
+            default:
+                cout << "Error: Invalid menu choice.\n";
+                break;
+        }
+    } while (choice != 0);
+}
+
 // MATRIX & ALGORITHM
-int studentMatrix[NUM_DEPARTMENTS][NUM_RESOURCES];
+int resourceUtilMatrix[NUM_DEPARTMENTS][NUM_RESOURCES];
 
 void initializeMatrix() {
-    int sampleData[NUM_DEPARTMENTS][NUM_RESOURCES] = {
-        {30, 25, 20, 15},
-        {28, 22, 18, 12},
-        {25, 20, 15, 10},
-        {35, 30, 25, 20}
+   int sampleData[NUM_DEPARTMENTS][NUM_RESOURCES] = {
+        {12, 3, 8, 5},
+        {9, 2, 4, 10},
+        {5, 6, 10, 2},
+        {4, 8, 6, 3}
     };
 
     for (int i = 0; i < NUM_DEPARTMENTS; i++) {
         for (int j = 0; j < NUM_RESOURCES; j++) {
-            studentMatrix[i][j] = sampleData[i][j];
+            resourceUtilMatrix[i][j] = sampleData[i][j];
         }
     }
 }
 
 void displayMatrix() {
-    cout << "\n===== STUDENT MATRIX =====\n";
-    cout << "Department | Year 1 | Year 2 | Year 3 | Year 4\n";
+    cout << "\n===== CAMPUS RESOURCE UTILIZATION MATRIX =====\n";
+    cout << "(hours used per week)\n";
+    cout << "Department  | R-01 | R-02 | R-03 | R-04\n";
     cout << "------------------------------------------------\n";
 
     for (int i = 0; i < NUM_DEPARTMENTS; i++) {
-        cout << "Department " << i + 1 << " | ";
+        cout << "D" << i + 1 << "          | ";
 
         for (int j = 0; j < NUM_RESOURCES; j++) {
-            cout << studentMatrix[i][j] << "      ";
+            cout << resourceUtilMatrix[i][j] << "    | ";
         }
 
         cout << "\n";
@@ -245,35 +363,34 @@ void displayMatrix() {
 }
 
 void displayRowTotals() {
-    cout << "\n===== ROW TOTALS =====\n";
+    cout << "\n===== DEPARTMENT TOTALS (row totals) =====\n";
 
     for (int i = 0; i < NUM_DEPARTMENTS; i++) {
         int total = 0;
 
         for (int j = 0; j < NUM_RESOURCES; j++) {
-            total += studentMatrix[i][j];
+            total += resourceUtilMatrix[i][j];
         }
 
         cout << "Department " << i + 1
-             << " total students: " << total << "\n";
+             << " total hours: " << total << "\n";
     }
 }
 
 void displayColumnTotals() {
-    cout << "\n===== COLUMN TOTALS =====\n";
+    cout << "\n===== RESOURCE TOTALS (column totals) =====\n";
 
     for (int j = 0; j < NUM_RESOURCES; j++) {
         int total = 0;
 
         for (int i = 0; i < NUM_DEPARTMENTS; i++) {
-            total += studentMatrix[i][j];
+            total += resourceUtilMatrix[i][j];
         }
 
-        cout << "Year " << j + 1
-             << " total students: " << total << "\n";
+        cout << "Resource R-0" << j + 1
+             << " total hours: " << total << "\n";
     }
 }
-
 
 // VALIDATION FUNCTIONS
 bool validateMenuChoice(int choice, int minChoice, int maxChoice) {
@@ -421,29 +538,26 @@ void displayMainMenu() {
     cout << "========================================\n";
     cout << "1. Add Student\n";
     cout << "2. Display Students\n";
-    cout << "3. Update Student\n";
-    cout << "4. Delete Student\n";
-    cout << "5. Allocate Resource Memory\n";
-    cout << "6. Initialize Resources\n";
-    cout << "7. Display Resources\n";
-    cout << "8. Display Resource Addresses\n";
-    cout << "9. Display Student Matrix\n";
-    cout << "10. Display Department Totals\n";
-    cout << "11. Display Year Totals\n";
-    cout << "12. Generate System Report\n";
-    cout << "13. Deallocate Resource Memory\n";
-    cout << "0. Exit\n";
+    cout << "3. Search Student\n";
+    cout << "4. Update Student\n";
+    cout << "5. Delete Student\n";
+    cout << "6. Manage Campus Resources\n";
+    cout << "7. Display Resource Matrix\n";
+    cout << "8. Analyze Resource Utilization\n";
+    cout << "9. Generate Report\n";
+    cout << "10. Exit\n";
     cout << "========================================\n";
     cout << "Enter your choice: ";
 }
 
-  void generateSystemReport() {
+void generateSystemReport() {
     cout << "\n============================================\n";
     cout << "             SYSTEM REPORT\n";
     cout << "============================================\n";
     cout << "\n===== STUDENT SUMMARY =====\n";
     cout << "Total active students: "
          << studentCount << "\n";
+
     cout << "Available student slots: "
          << MAX_STUDENTS - studentCount << "\n";
     cout << "\n===== STUDENT RECORDS =====\n";
@@ -465,8 +579,8 @@ void displayMainMenu() {
             }
         }
     }
-    cout << "\n===== RESOURCE SUMMARY =====\n";
 
+    cout << "\n===== RESOURCE SUMMARY =====\n";
     if (resourcePtr == nullptr) {
         cout << "Resource memory has not been allocated.\n";
     } else {
@@ -482,29 +596,29 @@ void displayMainMenu() {
         cout << "Total resource capacity: "
              << totalCapacity << "\n";
     }
-    cout << "\n===== STUDENT MATRIX SUMMARY =====\n";
+
+    cout << "\n===== RESOURCE UTILIZATION MATRIX SUMMARY =====\n";
 
     int grandTotal = 0;
+
     for (int i = 0; i < NUM_DEPARTMENTS; i++) {
         int rowTotal = 0;
 
         for (int j = 0; j < NUM_RESOURCES; j++) {
-            rowTotal += studentMatrix[i][j];
+            rowTotal += resourceUtilMatrix[i][j];
         }
 
         cout << "Department " << i + 1
              << " total: "
              << rowTotal
-             << " students\n";
+             << " hours\n";
 
         grandTotal += rowTotal;
     }
 
-    cout << "Grand total in matrix: "
+    cout << "Grand total hours in matrix: "
          << grandTotal
-         << " students\n";
-
-
+         << "\n";
 }
 
 int main() {
@@ -513,8 +627,10 @@ int main() {
 
     int choice;
     do {
+
         displayMainMenu();
         cin >> choice;
+
         if (cin.fail()) {
             cin.clear();
             cin.ignore(1000, '\n');
@@ -525,7 +641,7 @@ int main() {
 
         cin.ignore(1000, '\n');
 
-        if (choice == 0) {
+        if (choice == 10) {
             deallocateResourceMemory();
 
             cout << "\nThank you for using the "
@@ -536,19 +652,18 @@ int main() {
             break;
         }
 
-        if (!validateMenuChoice(choice, 1, 13)) {
+        if (!validateMenuChoice(choice, 1, 10)) {
             continue;
         }
 
         switch (choice) {
-                case 1: {
+            case 1: {
                 int id;
                 char name[50];
                 char section[10];
                 char yearLevel[15];
 
                 cout << "\n===== ADD STUDENT =====\n";
-
                 cout << "Enter Student ID: ";
                 cin >> id;
                 cin.ignore(1000, '\n');
@@ -588,6 +703,10 @@ int main() {
                 break;
             }
             case 3: {
+                searchStudent();
+                break;
+            }
+            case 4: {
                 int id;
                 char newSection[10];
                 char newYearLevel[15];
@@ -620,7 +739,7 @@ int main() {
 
                 break;
             }
-            case 4: {
+            case 5: {
                 int id;
 
                 cout << "\n===== DELETE STUDENT =====\n";
@@ -638,60 +757,30 @@ int main() {
 
                 break;
             }
-            case 5: {
-                cout << "\n===== ALLOCATE RESOURCE MEMORY =====\n";
-
-                allocateResourceMemory();
-
-                break;
-            }
             case 6: {
-                cout << "\n===== INITIALIZE RESOURCES =====\n";
-
-                initializeResources();
-
+                manageCampusResources();
                 break;
             }
             case 7: {
-                displayResourcesUsingPointer();
-
+                displayMatrix();
                 break;
             }
             case 8: {
-                displayResourceAddresses();
-
+                displayRowTotals();
+                displayColumnTotals();
                 break;
             }
             case 9: {
-                displayMatrix();
-
-                break;
-            }
-            case 10: {
-                displayRowTotals();
-
-                break;
-            }
-            case 11: {
-                displayColumnTotals();
-
-                break;
-            }
-            case 12: {
                 generateSystemReport();
-
                 break;
             }
-            case 13: {
-                deallocateResourceMemory();
 
-                break;
-            }
             default:
                 cout << "Error: Invalid menu choice.\n";
                 break;
         }
 
-    } while (choice != 0);
+    } while (choice != 10);
+
     return 0;
 }
