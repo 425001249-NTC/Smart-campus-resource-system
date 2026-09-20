@@ -210,16 +210,70 @@ void deallocateResourceMemory() {
     }
 }
 
+// POSITION 4: MATRIX & ALGORITHM DEVELOPER
+int studentMatrix[NUM_DEPARTMENTS][NUM_RESOURCES];
 
-// POSITION 4: MATRIX & ALGORITHM DEVELOPER -- 2D array declaration
+void initializeMatrix() {
+    int sampleData[NUM_DEPARTMENTS][NUM_RESOURCES] = {
+        {30, 25, 20, 15},
+        {28, 22, 18, 12},
+        {25, 20, 15, 10},
+        {35, 30, 25, 20}
+    };
 
-// POSITION 4: MATRIX & ALGORITHM DEVELOPER -- matrix init with sample data
+    for (int i = 0; i < NUM_DEPARTMENTS; i++) {
+        for (int j = 0; j < NUM_RESOURCES; j++) {
+            studentMatrix[i][j] = sampleData[i][j];
+        }
+    }
+}
 
-// POSITION 4: MATRIX & ALGORITHM DEVELOPER -- matrix operation: display
+void displayMatrix() {
+    cout << "\n===== STUDENT MATRIX =====\n";
+    cout << "Department | Year 1 | Year 2 | Year 3 | Year 4\n";
+    cout << "------------------------------------------------\n";
 
-// POSITION 4: MATRIX & ALGORITHM DEVELOPER -- matrix operation: row totals (O(n^2))
+    for (int i = 0; i < NUM_DEPARTMENTS; i++) {
+        cout << "Department " << i + 1 << " | ";
 
-// POSITION 4: MATRIX & ALGORITHM DEVELOPER -- matrix operation: column totals
+        for (int j = 0; j < NUM_RESOURCES; j++) {
+            cout << studentMatrix[i][j] << "      ";
+        }
+
+        cout << "\n";
+    }
+}
+
+void displayRowTotals() {
+    cout << "\n===== ROW TOTALS =====\n";
+
+    for (int i = 0; i < NUM_DEPARTMENTS; i++) {
+        int total = 0;
+
+        for (int j = 0; j < NUM_RESOURCES; j++) {
+            total += studentMatrix[i][j];
+        }
+
+        cout << "Department " << i + 1
+             << " total students: " << total << "\n";
+    }
+}
+
+void displayColumnTotals() {
+    cout << "\n===== COLUMN TOTALS =====\n";
+
+    for (int j = 0; j < NUM_RESOURCES; j++) {
+        int total = 0;
+
+        for (int i = 0; i < NUM_DEPARTMENTS; i++) {
+            total += studentMatrix[i][j];
+        }
+
+        cout << "Year " << j + 1
+             << " total students: " << total << "\n";
+    }
+}
+
 
 // POSITION 5: DOCUMENTATION & QA LEAD -- validate menu choice
 
