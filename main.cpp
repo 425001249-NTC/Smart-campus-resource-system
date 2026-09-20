@@ -101,17 +101,115 @@ bool deleteStudentFromArray(int id) {
     return true;
 }
 
-// POSITION 3: MEMORY & POINTER DEVELOPER -- ADT (CampusResource struct)
+// POSITION 3: MEMORY & POINTER DEVELOPER
+struct CampusResource {
+    char resourceID[10];
+    char resourceName[50];
+    char category[30];
+    int capacity;
+};
 
-// POSITION 3: MEMORY & POINTER DEVELOPER -- pointer declaration
+CampusResource* resourcePtr = nullptr;
 
-// POSITION 3: MEMORY & POINTER DEVELOPER -- dynamic allocation (new)
+void allocateResourceMemory() {
+    if (resourcePtr != nullptr) {
+        cout << "Resource memory is already allocated.\n";
+        return;
+    }
 
-// POSITION 3: MEMORY & POINTER DEVELOPER -- access via pointer
+    resourcePtr = new CampusResource[MAX_RESOURCES];
+    for (int i = 0; i < MAX_RESOURCES; i++) {
 
-// POSITION 3: MEMORY & POINTER DEVELOPER -- display via pointer arithmetic
+        strcpy(resourcePtr[i].resourceID, "");
+        strcpy(resourcePtr[i].resourceName, "");
+        strcpy(resourcePtr[i].category, "");
+        resourcePtr[i].capacity = 0;
+    }
 
-// POSITION 3: MEMORY & POINTER DEVELOPER -- deallocation (delete, memory-leak prevention)
+    cout << "Dynamic memory allocated for "
+         << MAX_RESOURCES
+         << " campus resources.\n";
+}
+
+void initializeResources() {
+    if (resourcePtr == nullptr) {
+        cout << "Error: Resource memory has not been allocated.\n";
+        return;
+    }
+
+    strcpy(resourcePtr[0].resourceID, "R-01");
+    strcpy(resourcePtr[0].resourceName, "Computer Laboratory 1");
+    strcpy(resourcePtr[0].category, "Laboratory");
+    resourcePtr[0].capacity = 50;
+
+    strcpy(resourcePtr[1].resourceID, "R-02");
+    strcpy(resourcePtr[1].resourceName, "Conference Room");
+    strcpy(resourcePtr[1].category, "Meeting Space");
+    resourcePtr[1].capacity = 20;
+
+    strcpy(resourcePtr[2].resourceID, "R-03");
+    strcpy(resourcePtr[2].resourceName, "Library Study Hub");
+    strcpy(resourcePtr[2].category, "Study Area");
+    resourcePtr[2].capacity = 60;
+
+    strcpy(resourcePtr[3].resourceID, "R-04");
+    strcpy(resourcePtr[3].resourceName, "Robotics Lab");
+    strcpy(resourcePtr[3].category, "Laboratory");
+    resourcePtr[3].capacity = 20;
+
+    strcpy(resourcePtr[4].resourceID, "R-05");
+    strcpy(resourcePtr[4].resourceName, "Multimedia Room");
+    strcpy(resourcePtr[4].category, "Laboratory");
+    resourcePtr[4].capacity = 25;
+}
+
+void displayResourcesUsingPointer() {
+    if (resourcePtr == nullptr) {
+        cout << "Error: Resource memory has not been allocated.\n";
+        return;
+    }
+    cout << "\n===== CAMPUS RESOURCES =====\n";
+    cout << "ID | Resource Name | Category | Capacity\n";
+    cout << "-----------------------------------------------------\n";
+
+    for (int i = 0; i < MAX_RESOURCES; i++) {
+
+        CampusResource* current = resourcePtr + i;
+
+        cout << current->resourceID << " | "
+             << current->resourceName << " | "
+             << current->category << " | "
+             << current->capacity << "\n";
+    }
+}
+
+void displayResourceAddresses() {
+    if (resourcePtr == nullptr) {
+
+        cout << "Error: Resource memory has not been allocated.\n";
+        return;
+    }
+
+    cout << "\n===== MEMORY ADDRESSES =====\n";
+
+    for (int i = 0; i < MAX_RESOURCES; i++) {
+
+        CampusResource* current = resourcePtr + i;
+
+        cout << "Resource " << i + 1
+             << " address: " << current << "\n";
+    }
+}
+
+void deallocateResourceMemory() {
+    if (resourcePtr != nullptr) {
+        delete[] resourcePtr;
+        resourcePtr = nullptr;
+
+        cout << "Dynamic resource memory released successfully.\n";
+    }
+}
+
 
 // POSITION 4: MATRIX & ALGORITHM DEVELOPER -- 2D array declaration
 
