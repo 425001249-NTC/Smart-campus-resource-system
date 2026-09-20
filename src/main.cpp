@@ -2,7 +2,7 @@
 #include <cstring>
 using namespace std;
 
-const int MAX_STUDENTS = 10;
+const int MAX_STUDENTS = 50;
 const int MAX_RESOURCES = 5;
 const int NUM_DEPARTMENTS = 4;
 const int NUM_RESOURCES = 4;
