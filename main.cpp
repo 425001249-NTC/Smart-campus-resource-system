@@ -101,7 +101,7 @@ bool deleteStudentFromArray(int id) {
     return true;
 }
 
-// POSITION 3: MEMORY & POINTER DEVELOPER
+// MEMORY & POINTER
 struct CampusResource {
     char resourceID[10];
     char resourceName[50];
@@ -210,7 +210,7 @@ void deallocateResourceMemory() {
     }
 }
 
-// POSITION 4: MATRIX & ALGORITHM DEVELOPER
+// MATRIX & ALGORITHM
 int studentMatrix[NUM_DEPARTMENTS][NUM_RESOURCES];
 
 void initializeMatrix() {
@@ -275,17 +275,144 @@ void displayColumnTotals() {
 }
 
 
-// POSITION 5: DOCUMENTATION & QA LEAD -- validate menu choice
+// VALIDATION FUNCTIONS
+bool validateMenuChoice(int choice, int minChoice, int maxChoice) {
+    if (choice < minChoice || choice > maxChoice) {
+        cout << "Error: Invalid menu choice. "
+             << "Please enter a number from "
+             << minChoice << " to " << maxChoice << ".\n";
+        return false;
+    }
 
-// POSITION 5: DOCUMENTATION & QA LEAD -- validate student ID format
+    return true;
+}
 
-// POSITION 5: DOCUMENTATION & QA LEAD -- duplicate check
+bool validateStudentID(int id) {
+    if (id <= 0) {
+        cout << "Error: Student ID must be a positive number.\n";
+        return false;
+    }
 
-// POSITION 5: DOCUMENTATION & QA LEAD -- empty-field check
+    if (id > 999999999) {
+        cout << "Error: Student ID is too long.\n";
+        return false;
+    }
 
-// POSITION 5: DOCUMENTATION & QA LEAD -- numeric input validation
+    return true;
+}
 
-// POSITION 5: DOCUMENTATION & QA LEAD -- validation wrapper
+bool isDuplicateStudentID(int id) {
+    for (int i = 0; i < studentCount; i++) {
+        if (studentArray[i].studentID == id &&
+            studentArray[i].isActive) {
+
+            cout << "Error: Student ID " << id
+                 << " already exists.\n";
+
+            return true;
+        }
+    }
+
+    return false;
+}
+
+bool isEmptyField(const char* field, const char* fieldName) {
+    if (field == nullptr || strlen(field) == 0) {
+        cout << "Error: " << fieldName
+             << " cannot be empty.\n";
+        return true;
+    }
+
+    return false;
+}
+
+bool validateNumericInput(const char* input) {
+    if (input == nullptr || strlen(input) == 0) {
+        cout << "Error: Input cannot be empty.\n";
+        return false;
+    }
+
+    for (int i = 0; input[i] != '\0'; i++) {
+        if (input[i] < '0' || input[i] > '9') {
+            cout << "Error: Please enter numbers only.\n";
+            return false;
+        }
+    }
+    return true;
+}
+
+bool validateStudentData(
+    int id,
+    const char* name,
+    const char* section,
+    const char* yearLevel
+) {
+    if (!validateStudentID(id)) {
+        return false;
+    }
+
+    if (isDuplicateStudentID(id)) {
+        return false;
+    }
+
+    if (isEmptyField(name, "Student name")) {
+        return false;
+    }
+
+    if (isEmptyField(section, "Section")) {
+        return false;
+    }
+
+    if (isEmptyField(yearLevel, "Year level")) {
+        return false;
+    }
+
+    if (!hasCapacity()) {
+        cout << "Error: Cannot add student. "
+             << "Student array is full.\n";
+        return false;
+    }
+
+    return true;
+}
+
+bool validateStudentUpdate(
+    int id,
+    const char* newSection,
+    const char* newYearLevel
+) {
+    if (!validateStudentID(id)) {
+        return false;
+    }
+
+    if (findStudentIndexByID(id) == -1) {
+        cout << "Error: Student ID not found.\n";
+        return false;
+    }
+
+    if (isEmptyField(newSection, "Section")) {
+        return false;
+    }
+
+    if (isEmptyField(newYearLevel, "Year level")) {
+        return false;
+    }
+    return true;
+}
+
+bool validateStudentDeletion(int id) {
+    if (!validateStudentID(id)) {
+        return false;
+    }
+
+    if (findStudentIndexByID(id) == -1) {
+        cout << "Error: Student ID not found.\n";
+        return false;
+    }
+    return true;
+}
+
+
 
 // POSITION 1: PROJECT LEAD / SYSTEM INTEGRATOR -- menu display
 
