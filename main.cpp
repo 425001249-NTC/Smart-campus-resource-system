@@ -414,8 +414,284 @@ bool validateStudentDeletion(int id) {
 
 
 
-// POSITION 1: PROJECT LEAD / SYSTEM INTEGRATOR -- menu display
+// INT MAIN FUNCTION AND DISPLAY
+void displayMainMenu() {
+    cout << "\n========================================\n";
+    cout << "       CAMPUS MANAGEMENT SYSTEM\n";
+    cout << "========================================\n";
+    cout << "1. Add Student\n";
+    cout << "2. Display Students\n";
+    cout << "3. Update Student\n";
+    cout << "4. Delete Student\n";
+    cout << "5. Allocate Resource Memory\n";
+    cout << "6. Initialize Resources\n";
+    cout << "7. Display Resources\n";
+    cout << "8. Display Resource Addresses\n";
+    cout << "9. Display Student Matrix\n";
+    cout << "10. Display Department Totals\n";
+    cout << "11. Display Year Totals\n";
+    cout << "12. Generate System Report\n";
+    cout << "13. Deallocate Resource Memory\n";
+    cout << "0. Exit\n";
+    cout << "========================================\n";
+    cout << "Enter your choice: ";
+}
 
-// POSITION 1: PROJECT LEAD / SYSTEM INTEGRATOR -- report generation
+  void generateSystemReport() {
+    cout << "\n============================================\n";
+    cout << "             SYSTEM REPORT\n";
+    cout << "============================================\n";
+    cout << "\n===== STUDENT SUMMARY =====\n";
+    cout << "Total active students: "
+         << studentCount << "\n";
+    cout << "Available student slots: "
+         << MAX_STUDENTS - studentCount << "\n";
+    cout << "\n===== STUDENT RECORDS =====\n";
 
-// POSITION 1: PROJECT LEAD / SYSTEM INTEGRATOR -- main() + menu loop
+    if (studentCount == 0) {
+        cout << "No student records available.\n";
+    } else {
+        for (int i = 0; i < studentCount; i++) {
+            if (studentArray[i].isActive) {
+                cout << "ID: "
+                     << studentArray[i].studentID
+                     << " | Name: "
+                     << studentArray[i].name
+                     << " | Section: "
+                     << studentArray[i].section
+                     << " | Year Level: "
+                     << studentArray[i].yearLevel
+                     << "\n";
+            }
+        }
+    }
+    cout << "\n===== RESOURCE SUMMARY =====\n";
+
+    if (resourcePtr == nullptr) {
+        cout << "Resource memory has not been allocated.\n";
+    } else {
+        int totalCapacity = 0;
+
+        for (int i = 0; i < MAX_RESOURCES; i++) {
+            totalCapacity += resourcePtr[i].capacity;
+        }
+
+        cout << "Total resources: "
+             << MAX_RESOURCES << "\n";
+
+        cout << "Total resource capacity: "
+             << totalCapacity << "\n";
+    }
+    cout << "\n===== STUDENT MATRIX SUMMARY =====\n";
+
+    int grandTotal = 0;
+    for (int i = 0; i < NUM_DEPARTMENTS; i++) {
+        int rowTotal = 0;
+
+        for (int j = 0; j < NUM_RESOURCES; j++) {
+            rowTotal += studentMatrix[i][j];
+        }
+
+        cout << "Department " << i + 1
+             << " total: "
+             << rowTotal
+             << " students\n";
+
+        grandTotal += rowTotal;
+    }
+
+    cout << "Grand total in matrix: "
+         << grandTotal
+         << " students\n";
+
+
+}
+
+int main() {
+    initializeArray();
+    initializeMatrix();
+
+    int choice;
+    do {
+        displayMainMenu();
+        cin >> choice;
+        if (cin.fail()) {
+            cin.clear();
+            cin.ignore(1000, '\n');
+
+            cout << "Error: Please enter a valid number.\n";
+            continue;
+        }
+
+        cin.ignore(1000, '\n');
+
+        if (choice == 0) {
+            deallocateResourceMemory();
+
+            cout << "\nThank you for using the "
+                 << "Campus Management System.\n";
+
+            cout << "Program terminated successfully.\n";
+
+            break;
+        }
+
+        if (!validateMenuChoice(choice, 1, 13)) {
+            continue;
+        }
+
+        switch (choice) {
+                case 1: {
+                int id;
+                char name[50];
+                char section[10];
+                char yearLevel[15];
+
+                cout << "\n===== ADD STUDENT =====\n";
+
+                cout << "Enter Student ID: ";
+                cin >> id;
+                cin.ignore(1000, '\n');
+
+                cout << "Enter Student Name: ";
+                cin.getline(name, 50);
+
+                cout << "Enter Section: ";
+                cin.getline(section, 10);
+
+                cout << "Enter Year Level: ";
+                cin.getline(yearLevel, 15);
+
+                if (validateStudentData(
+                        id,
+                        name,
+                        section,
+                        yearLevel)) {
+
+                    if (addStudentToArray(
+                            id,
+                            name,
+                            section,
+                            yearLevel)) {
+
+                        cout << "Student added successfully.\n";
+                    }
+                }
+
+                break;
+            }
+            case 2: {
+                cout << "\n===== STUDENT RECORDS =====\n";
+
+                traverseStudentArray();
+
+                break;
+            }
+            case 3: {
+                int id;
+                char newSection[10];
+                char newYearLevel[15];
+
+                cout << "\n===== UPDATE STUDENT =====\n";
+
+                cout << "Enter Student ID: ";
+                cin >> id;
+                cin.ignore(1000, '\n');
+
+                cout << "Enter New Section: ";
+                cin.getline(newSection, 10);
+
+                cout << "Enter New Year Level: ";
+                cin.getline(newYearLevel, 15);
+
+                if (validateStudentUpdate(
+                        id,
+                        newSection,
+                        newYearLevel)) {
+
+                    if (updateStudentInArray(
+                            id,
+                            newSection,
+                            newYearLevel)) {
+
+                        cout << "Student updated successfully.\n";
+                    }
+                }
+
+                break;
+            }
+            case 4: {
+                int id;
+
+                cout << "\n===== DELETE STUDENT =====\n";
+
+                cout << "Enter Student ID: ";
+                cin >> id;
+                cin.ignore(1000, '\n');
+
+                if (validateStudentDeletion(id)) {
+
+                    if (deleteStudentFromArray(id)) {
+                        cout << "Student deleted successfully.\n";
+                    }
+                }
+
+                break;
+            }
+            case 5: {
+                cout << "\n===== ALLOCATE RESOURCE MEMORY =====\n";
+
+                allocateResourceMemory();
+
+                break;
+            }
+            case 6: {
+                cout << "\n===== INITIALIZE RESOURCES =====\n";
+
+                initializeResources();
+
+                break;
+            }
+            case 7: {
+                displayResourcesUsingPointer();
+
+                break;
+            }
+            case 8: {
+                displayResourceAddresses();
+
+                break;
+            }
+            case 9: {
+                displayMatrix();
+
+                break;
+            }
+            case 10: {
+                displayRowTotals();
+
+                break;
+            }
+            case 11: {
+                displayColumnTotals();
+
+                break;
+            }
+            case 12: {
+                generateSystemReport();
+
+                break;
+            }
+            case 13: {
+                deallocateResourceMemory();
+
+                break;
+            }
+            default:
+                cout << "Error: Invalid menu choice.\n";
+                break;
+        }
+
+    } while (choice != 0);
+    return 0;
+}
